@@ -11,6 +11,7 @@ class Message
     public $record;
     public $options;
     public $message;
+    public $exception;
 
     public function __construct($record, $options)
     {
@@ -21,6 +22,8 @@ class Message
     public static function fromArrayAndOptions($record, $options)
     {
         $messageBuilder = new self($record, $options);
+
+        $messageBuilder->exception = $messageBuilder->popException();
 
         $messageBuilder->createBaseMessage();
         $messageBuilder->addTitleText();
@@ -45,7 +48,7 @@ class Message
 
     public function title()
     {
-        $title = sprintf('**[%s]** %s', $this->record['level_name'], $this->record['message']);
+        $title = sprintf('**[%s%s]** %s', $this->record['level_name'], $this->exception ? ' ' . get_class($this->exception) : '', $this->record['message']);
 
         if ($this->shouldMention()) {
             $title .= sprintf(' (ping %s)', $this->mentions());
@@ -65,13 +68,13 @@ class Message
 
     public function addExceptionAttachment()
     {
-        if (! $exception = $this->popException()) {
+        if (! $this->exception) {
             return;
         }
 
-        $this->attachment(function (Attachment $attachment) use ($exception) {
+        $this->attachment(function (Attachment $attachment) {
             $attachment->text(
-                substr($exception->getTraceAsString(), 0, $this->options['max_attachment_length'])
+                substr($this->exception->getTraceAsString(), 0, $this->options['max_attachment_length'])
             );
         });
     }
