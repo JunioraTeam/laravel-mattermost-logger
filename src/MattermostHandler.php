@@ -2,12 +2,16 @@
 
 namespace ThibaudDauce\MattermostLogger;
 
-use Monolog\Logger;
 use ThibaudDauce\Mattermost\Mattermost;
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Level;
+use Monolog\LogRecord;
 
 class MattermostHandler extends AbstractProcessingHandler
 {
+    private Mattermost $mattermost;
+    private array $options = [];
+
     public function __construct(Mattermost $mattermost, $options = [])
     {
         $this->options = array_merge([
@@ -15,8 +19,8 @@ class MattermostHandler extends AbstractProcessingHandler
             'channel' => 'town-square',
             'icon_url' => null,
             'username' => 'Laravel Logs',
-            'level' => Logger::INFO,
-            'level_mention' => Logger::ERROR,
+            'level' => Level::Info,
+            'level_mention' => Level::Error,
             'mentions' => ['@here'],
             'short_field_length' => 62,
             'max_attachment_length' => 6000,
@@ -25,7 +29,7 @@ class MattermostHandler extends AbstractProcessingHandler
         $this->mattermost = $mattermost;
     }
 
-    public function write(array $record): void
+    public function write(LogRecord|array $record): void
     {
         if ($record['level'] < $this->options['level']) {
             return;
