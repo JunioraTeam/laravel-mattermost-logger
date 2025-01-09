@@ -1,5 +1,5 @@
 {
-    "name": "thibaud-dauce/laravel-mattermost-logger",
+    "name": "juniora/laravel-mattermost-logger",
     "type": "library",
     "license": "MIT",
     "require": {
@@ -12,6 +12,10 @@
         {
             "name": "Thibaud Dauce",
             "email": "thibaud.dauce@pm.me"
+        },
+        {
+            "name": "Nima HeydariNasab",
+            "email": "nima.heydari79@yahoo.com"
         }
     ],
     "autoload": {
